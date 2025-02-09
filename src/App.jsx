@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react'
 import { SlShuffle } from 'react-icons/sl'
+import { FaDog, FaCat } from 'react-icons/fa'
+import { GiMouse, GiFrog, GiRabbit, GiFox, GiBearFace, GiPanda, GiKoala, GiTigerHead } from 'react-icons/gi'
 
 const DIFFICULTIES = {
   EASY: 5,
   HARD: 10,
 }
 
-const EMOJIS = ['🐶', '🐱', '🐭', '🐸 ', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯']
+// Define an array of icon components to use as card faces.
+const ICONS = [FaDog, FaCat, GiMouse, GiFrog, GiRabbit, GiFox, GiBearFace, GiPanda, GiKoala, GiTigerHead]
 
 export default function MemoryGame() {
   const [cards, setCards] = useState([])
@@ -15,19 +18,29 @@ export default function MemoryGame() {
   const [attempts, setAttempts] = useState(0)
   const [difficulty, setDifficulty] = useState(DIFFICULTIES.EASY)
 
-  // Define initializeGame
+  // Initialize game state with pairs of icons.
   const initializeGame = (diff) => {
-    // Select the first "diff" emojis without shuffling them
-    const selectedEmojis = EMOJIS.slice(0, diff)
+    // Select the first "diff" icons.
+    const selectedIcons = ICONS.slice(0, diff)
     const newCards = []
 
-    // Create a pair of cards for each emoji
-    selectedEmojis.forEach((emoji, index) => {
-      newCards.push({ id: index * 2, content: emoji, isFlipped: false, isMatched: false })
-      newCards.push({ id: index * 2 + 1, content: emoji, isFlipped: false, isMatched: false })
+    // Create a pair of cards for each icon.
+    selectedIcons.forEach((Icon, index) => {
+      newCards.push({
+        id: index * 2,
+        content: Icon, // store the component type
+        isFlipped: false,
+        isMatched: false,
+      })
+      newCards.push({
+        id: index * 2 + 1,
+        content: Icon,
+        isFlipped: false,
+        isMatched: false,
+      })
     })
 
-    // Shuffle the cards once and reset game state
+    // Shuffle the cards and reset game state.
     newCards.sort(() => Math.random() - 0.5)
     setCards(newCards)
     setFlippedCards([])
@@ -35,7 +48,7 @@ export default function MemoryGame() {
     setAttempts(0)
   }
 
-  // Call initializeGame on mount and whenever difficulty changes.
+  // Re-initialize game on mount or when difficulty changes.
   useEffect(() => {
     initializeGame(difficulty)
   }, [difficulty])
@@ -120,7 +133,12 @@ export default function MemoryGame() {
             } ${card.isMatched ? 'opacity-50' : ''}`}
             onClick={() => !card.isFlipped && !card.isMatched && handleCardClick(card.id)}
           >
-            {card.isFlipped ? card.content : '❓'}
+            {card.isFlipped ? (
+              // Render the icon component.
+              <card.content />
+            ) : (
+              '❓'
+            )}
           </div>
         ))}
       </div>
